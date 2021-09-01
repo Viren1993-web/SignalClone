@@ -1,38 +1,40 @@
-const aws = require("aws-ask");
-const { User } = require("../../../../../src/models");
+const aws = require("aws-sdk");
 const ddb = new aws.DynamoDB();
 
 const tableName = process.env.USERTABLE;
+
 exports.handler = async (event) => {
-  //event event.request.userAttributes.sub
+  // event event.request.userAttributes.(sub, email)
   // insert code to be executed by your lambda trigger
 
-  if (!event?.request?.userAttributes?.sub) {
-    console.log("No Sub");
+  if (!event?.request?.userAttributes?.sub){
+    console.log("No sub provided");
     return;
   }
-  const now = new Data();
+
+  const now = new Date();
   const timestamp = now.getTime();
+
   const userItem = {
-    __typename: { S: User },
+    __typename: { S: 'User' },
     _lastChangedAt: { N: timestamp.toString() },
-    _version: { N: 1 },
+    _version: { N: "1" },
     createdAt: { S: now.toISOString() },
     updatedAt: { S: now.toISOString() },
     id: { S: event.request.userAttributes.sub },
     name: { S: event.request.userAttributes.email },
-  };
+  }
+  
   const params = {
     Item: userItem,
-    TableName: tableName,
+    TableName: tableName
   };
-  await ddb.puItem(params).promise();
-  //save the new user to DynamoDB
-
+  
+  // save a new user to DynamoDB
   try {
-    await ddb.puItem(params).promise();
-    console.log("Success");
+    await ddb.putItem(params).promise();
+    console.log("success");
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
 };
