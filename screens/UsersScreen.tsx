@@ -8,9 +8,7 @@ export default function UserScreen() {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-
     DataStore.query(User).then(setUsers);
-
   }, []);
   console.log(users);
   return (

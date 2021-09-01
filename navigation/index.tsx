@@ -58,7 +58,7 @@ function RootNavigator() {
         name="UsersScreen"
         component={UsersScreen}
         options={{
-          title: "User",
+          title: "Users",
         }}
       />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
