@@ -15,7 +15,7 @@ export default function ChatRoomItem({ chatRoom }) {
     useEffect(() => {
         const fetchUsers = async () => {
             const fetchedUsers = (await DataStore.query(ChatRoomUser))
-                .filter(charRoomUser => chatRoomUser.chatroom.id === chatRoom.id)
+                .filter(chatRoomUser => chatRoomUser.chatroom.id === chatRoom.id)
                 .map(chatRoomUser => chatRoomUser.user);
             //setUsers(fetchedUsers);
             console.log(fetchedUsers);
@@ -24,11 +24,11 @@ export default function ChatRoomItem({ chatRoom }) {
 
         };
         fetchUsers();
-    }, [])
+    }, []);
 
     useEffect(() => {
-        if(!chatRoom.chatLastMessageId)
-        return{}
+        if(!chatRoom.chatRoomLastMessageId)
+        return;
         DataStore.query(Message,chatRoom.chatLastMessageId).then(setLastMessage);
     }, []);
 
