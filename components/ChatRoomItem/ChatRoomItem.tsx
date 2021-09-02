@@ -15,7 +15,7 @@ export default function ChatRoomItem({ chatRoom }) {
     useEffect(() => {
         const fetchUsers = async () => {
             const fetchedUsers = (await DataStore.query(ChatRoomUser))
-                .filter(charRoomUser => ChatRoomUser.chatroom.id === chatRoom.id)
+                .filter(charRoomUser => chatRoomUser.chatroom.id === chatRoom.id)
                 .map(chatRoomUser => chatRoomUser.user);
             //setUsers(fetchedUsers);
             console.log(fetchedUsers);
