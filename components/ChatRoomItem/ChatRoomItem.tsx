@@ -3,13 +3,13 @@ import { View, Text, Image, StyleSheet, Pressable, ActivityIndicatorBase } from 
 import { useNavigation } from '@react-navigation/core';
 import styles from './styles';
 import { DataStore } from '@aws-amplify/datastore';
-import { User, ChatRoomUser } from '../../src/models';
+import { User, ChatRoomUser,Message } from '../../src/models';
 import { Auth } from 'aws-amplify';
 
 export default function ChatRoomItem({ chatRoom }) {
     //const [users, setUsers] = useState<User[]>([]);
     const [user, setUser] = useState<User | null>(null);
-    const [lastMessage,setLastMessage]=useState<Message|undefined>(null);
+    const [lastMessage,setLastMessage]=useState<Message|undefined>(undefined);
 
     const navigation = useNavigation();
     useEffect(() => {
@@ -41,7 +41,7 @@ export default function ChatRoomItem({ chatRoom }) {
 
     return (
         <Pressable onPress={onPress} style={styles.container}>
-            <Image source={{ uri: user.imageUri }}
+            <Image source={{ uri: user.imageUrl }}
                 style={styles.image} />
 
             {!!chatRoom.newMessages ? <View style={styles.badgeContainer}>
