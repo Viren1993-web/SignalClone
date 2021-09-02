@@ -31,6 +31,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "image": {
+                    "name": "image",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "audio": {
+                    "name": "audio",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -404,5 +418,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "22848183e5181a1cdee536177a403969"
+    "version": "7ea75d3e46930ab02674d13788af3371"
 };
