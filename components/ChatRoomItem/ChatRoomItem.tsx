@@ -9,6 +9,8 @@ import { Auth } from 'aws-amplify';
 export default function ChatRoomItem({ chatRoom }) {
     //const [users, setUsers] = useState<User[]>([]);
     const [user, setUser] = useState<User | null>(null);
+    const [lastMessage,setLastMessage]=useState<Message|undefined>(null);
+
     const navigation = useNavigation();
     useEffect(() => {
         const fetchUsers = async () => {
@@ -23,6 +25,12 @@ export default function ChatRoomItem({ chatRoom }) {
         };
         fetchUsers();
     }, [])
+
+    useEffect(() => {
+        if(!chatRoom.chatLastMessageId)
+        return{}
+        DataStore.query(Message,chatRoom.chatLastMessageId).then(setLastMessage);
+    }, []);
 
     const onPress = () => {
         navigation.navigate('ChatRoom', { id: chatRoom.id });
@@ -46,9 +54,9 @@ export default function ChatRoomItem({ chatRoom }) {
             <View style={styles.rightContainer}>
                 <View style={styles.row}>
                     <Text style={styles.name}>{user.name}</Text>
-                    <Text style={styles.text}>{chatRoom.lastMessage.createdAt}</Text>
+                    <Text style={styles.text}>{lastMessage.createdAt}</Text>
                 </View>
-                <Text numberOfLines={1} style={styles.text}>{chatRoom.lastMessage.content}</Text>
+                <Text numberOfLines={1} style={styles.text}>{lastMessage.content}</Text>
             </View>
         </Pressable>
     );
