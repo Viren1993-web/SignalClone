@@ -24,7 +24,7 @@ import * as ImagePicker from "expo-image-picker";
 import { v4 as uuidv4 } from "uuid";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { stat } from "fs";
-import AudioPlayer from "../AudioPlayer";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
 
 const MessageInput = ({ chatRoom }) => {
   const [message, setMessage] = useState("");
@@ -146,6 +146,7 @@ const MessageInput = ({ chatRoom }) => {
         image: key,
         userID: user.attributes.sub,
         chatroomID: chatRoom.id,
+        status: "SENT",
       })
     );
 
@@ -155,8 +156,8 @@ const MessageInput = ({ chatRoom }) => {
   };
 
   const getBlob = async (uri: string) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
+    const respone = await fetch(uri);
+    const blob = await respone.blob();
     return blob;
   };
 
@@ -203,9 +204,9 @@ const MessageInput = ({ chatRoom }) => {
       return;
     }
     const uriParts = soundURI.split(".");
-    const extension = uriParts[uriParts.length - 1];
+    const extenstion = uriParts[uriParts.length - 1];
     const blob = await getBlob(soundURI);
-    const { key } = await Storage.put(`${uuidv4()}.${extension}`, blob, {
+    const { key } = await Storage.put(`${uuidv4()}.${extenstion}`, blob, {
       progressCallback,
     });
 

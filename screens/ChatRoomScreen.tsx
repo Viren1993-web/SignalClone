@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {StyleSheet,  FlatList,  SafeAreaView,  ActivityIndicator} from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  SafeAreaView,
+  ActivityIndicator,
+} from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/core";
 import { DataStore } from "@aws-amplify/datastore";
 import { ChatRoom, Message as MessageModel } from "../src/models";
