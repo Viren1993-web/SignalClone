@@ -8,7 +8,6 @@ import { useWindowDimensions } from "react-native";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { Ionicons } from "@expo/vector-icons";
 import { Message as MessageModel } from "../../src/models";
-import MessageReply from "../MessageReply/MessageReply";
 
 const blue = "#3777f0";
 const grey = "lightgrey";
@@ -87,7 +86,13 @@ const Message = (props) => {
         { width: soundURI ? "75%" : "auto" },
       ]}
     >
-      {repliedTo && (<MessageReply message={repliedTo} />)}
+      {repliedTo && (
+        <View>
+          <Text style={styles.messageReply}>
+            Reply To: {repliedTo.content}
+          </Text>
+        </View>
+      )}
       <View style={styles.row}>
         {message.image && (
           <View style={{ marginBottom: message.content ? 10 : 0 }}>
