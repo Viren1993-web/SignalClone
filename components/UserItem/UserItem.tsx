@@ -32,11 +32,11 @@ export default function UserItem({ user }) {
     }));
 
     navigation.navigate('ChatRoom', { id: newChatRoom.id });
-  }
+  };
 
   return (
     <Pressable onPress={onPress} style={styles.container}>
-      <Image source={{ uri: user.imageUri}} style={styles.image} />
+      <Image source={{ uri: user.imageUrl}} style={styles.image} />
 
       <View style={styles.rightContainer}>
         <View style={styles.row}>

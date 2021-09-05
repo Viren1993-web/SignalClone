@@ -11,10 +11,10 @@
     "userpoolArn": {
       "Type": "String"
     },
-    "functionSignalClonePostConfirmationName": {
+    "functionSignalMessagePostConfirmationName": {
       "Type": "String"
     },
-    "functionSignalClonePostConfirmationArn": {
+    "functionSignalMessagePostConfirmationArn": {
       "Type": "String"
     }
   },
@@ -34,7 +34,7 @@
       "Properties": {
         "Action": "lambda:InvokeFunction",
         "FunctionName": {
-          "Ref": "functionSignalClonePostConfirmationName"
+          "Ref": "functionSignalMessagePostConfirmationName"
         },
         "Principal": "cognito-idp.amazonaws.com",
         "SourceArn": {
@@ -132,9 +132,9 @@
         "lambdaConfig": [
           {
             "triggerType": "PostConfirmation",
-            "lambdaFunctionName": "SignalClonePostConfirmation",
+            "lambdaFunctionName": "SignalMessagePostConfirmation",
             "lambdaFunctionArn": {
-              "Ref": "functionSignalClonePostConfirmationArn"
+              "Ref": "functionSignalMessagePostConfirmationArn"
             }
           }
         ]

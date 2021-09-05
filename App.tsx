@@ -9,13 +9,13 @@ import config from './src/aws-exports';
 Amplify.configure(config);
 import { withAuthenticator } from 'aws-amplify-react-native';
 import { Message, User } from './src/models';
-import moment from 'moment';
+
 
 function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
   const [user, setUser] = useState<User | null>(null);
-
+  Auth.currentAuthenticatedUser().then(console.log);
   useEffect(() => {
     //create listener
     const listener = Hub.listen("datastore", async (hubData) => {

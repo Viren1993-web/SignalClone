@@ -1,8 +1,8 @@
 {
     "identityPoolName": "testAuthIdentityPool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "signal7fe35068",
-    "userPoolName": "SignalClone",
+    "resourceNameTruncated": "signal7af600ad",
+    "userPoolName": "SignalMessage",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -25,10 +25,10 @@
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "Signal7fe35068_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "Signal7af600ad_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "7fe35068",
-    "resourceName": "SignalClone",
+    "sharedId": "7af600ad",
+    "resourceName": "SignalMessage",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -56,7 +56,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "SignalClonePostConfirmation",
+            "resourceName": "SignalMessagePostConfirmation",
             "triggerProvider": "Cognito",
             "attributes": [
                 "Arn",
@@ -69,7 +69,7 @@
     "parentStack": {
         "Ref": "AWS::StackId"
     },
-    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"SignalClonePostConfirmation\"\n  }\n]",
+    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"SignalMessagePostConfirmation\"\n  }\n]",
     "breakCircularDependency": true,
     "permissions": []
 }

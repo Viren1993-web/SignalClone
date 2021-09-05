@@ -17,20 +17,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "userID": {
-                    "name": "userID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "chatroomID": {
-                    "name": "chatroomID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "image": {
                     "name": "image",
                     "isArray": false,
@@ -54,8 +40,15 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "replyToMessageID": {
-                    "name": "replyToMessageID",
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "chatroomID": {
+                    "name": "chatroomID",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": false,
@@ -151,20 +144,6 @@ export const schema = {
                         "targetName": "chatRoomLastMessageId"
                     }
                 },
-                "Messages": {
-                    "name": "Messages",
-                    "isArray": true,
-                    "type": {
-                        "model": "Message"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "chatroomID"
-                    }
-                },
                 "ChatRoomUsers": {
                     "name": "ChatRoomUsers",
                     "isArray": true,
@@ -177,6 +156,20 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "chatroom"
+                    }
+                },
+                "Messages": {
+                    "name": "Messages",
+                    "isArray": true,
+                    "type": {
+                        "model": "Message"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "chatroomID"
                     }
                 },
                 "createdAt": {
@@ -347,8 +340,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "imageUrl": {
-                    "name": "imageUrl",
+                "imageUri": {
+                    "name": "imageUri",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -358,6 +351,13 @@ export const schema = {
                     "name": "status",
                     "isArray": false,
                     "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "lastOnlineAt": {
+                    "name": "lastOnlineAt",
+                    "isArray": false,
+                    "type": "AWSTimestamp",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -388,13 +388,6 @@ export const schema = {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "user"
                     }
-                },
-                "lastOnlineAt": {
-                    "name": "lastOnlineAt",
-                    "isArray": false,
-                    "type": "AWSTimestamp",
-                    "isRequired": false,
-                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -450,5 +443,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "87695dc3da85e4332f9953c7e972629c"
+    "version": "e9cafcad390ce2554586dee1a4bb1bfe"
 };

@@ -1,12 +1,12 @@
 {
   "auth": {
-    "SignalClone": {
+    "SignalMessage": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
           "category": "function",
-          "resourceName": "SignalClonePostConfirmation",
+          "resourceName": "SignalMessagePostConfirmation",
           "triggerProvider": "Cognito",
           "attributes": [
             "Arn",
@@ -32,7 +32,7 @@
     }
   },
   "api": {
-    "SignalClone": {
+    "SignalMessage": {
       "service": "AppSync",
       "providerPlugin": "awscloudformation",
       "output": {
@@ -51,7 +51,7 @@
             {
               "authenticationType": "AMAZON_COGNITO_USER_POOLS",
               "userPoolConfig": {
-                "userPoolId": "authSignalClone"
+                "userPoolId": "authSignalMessage"
               }
             }
           ]
@@ -60,16 +60,10 @@
     }
   },
   "function": {
-    "SignalClonePostConfirmation": {
+    "SignalMessagePostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
-    }
-  },
-  "storage": {
-    "SignalCloneImageAndVideo": {
-      "service": "S3",
-      "providerPlugin": "awscloudformation"
     }
   }
 }
