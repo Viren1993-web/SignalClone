@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Image, View, Pressable, ActivityIndicator } from "react-native";
+import { Text, Image, View, Pressable, ActivityIndicator, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { DataStore } from "@aws-amplify/datastore";
 import { ChatRoomUser, User, Message } from "../../src/models";
@@ -50,24 +50,26 @@ export default function ChatRoomItem({ chatRoom }) {
   const time = moment(lastMessage?.createdAt).from(moment());
 
   return (
-    <Pressable onPress={onPress} style={styles.container}>
-      <Image source={{ uri: user.imageUri }} style={styles.image} />
+    <SafeAreaView>
+      <Pressable onPress={onPress} style={styles.container}>
+        <Image source={{ uri: user.imageUri }} style={styles.image} />
 
-      {!!chatRoom.newMessages && (
-        <View style={styles.badgeContainer}>
-          <Text style={styles.badgeText}>{chatRoom.newMessages}</Text>
-        </View>
-      )}
+        {!!chatRoom.newMessages && (
+          <View style={styles.badgeContainer}>
+            <Text style={styles.badgeText}>{chatRoom.newMessages}</Text>
+          </View>
+        )}
 
-      <View style={styles.rightContainer}>
-        <View style={styles.row}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.text}>{time}</Text>
+        <View style={styles.rightContainer}>
+          <View style={styles.row}>
+            <Text style={styles.name} >{user.name}</Text>
+            <Text style={styles.text} numberOfLines={2}>{time}</Text>
+          </View>
+          <Text numberOfLines={1} style={styles.text}>
+            {lastMessage?.content}
+          </Text>
         </View>
-        <Text numberOfLines={1} style={styles.text}>
-          {lastMessage?.content}
-        </Text>
-      </View>
-    </Pressable>
+      </Pressable>
+    </SafeAreaView>
   );
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { View, StyleSheet, FlatList } from 'react-native';
 import { DataStore } from '@aws-amplify/datastore';
 import UserItem from '../components/UserItem/UserItem';

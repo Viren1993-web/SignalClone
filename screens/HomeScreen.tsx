@@ -16,7 +16,7 @@ export default function TabOneScreen() {
       const chatRooms = (await DataStore.query(ChatRoomUser))
         .filter(chatRoomUser => chatRoomUser.user.id === userData.attributes.sub)
         .map(chatRoomUser => chatRoomUser.chatroom);
-
+console.log();
       setChatRooms(chatRooms);
     };
     fetchChatRooms();

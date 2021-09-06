@@ -36,7 +36,7 @@ const ChatRoomHeader = ({ id, children }) => {
       return 'online'
     }
     else {
-      return `Last seen online ${moment(user.lastOnlineAt).fromNow()}`;
+      return `Last seen ${moment(user.lastOnlineAt).fromNow()}`;
     }
   }
 
@@ -45,19 +45,23 @@ const ChatRoomHeader = ({ id, children }) => {
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
-        width: width - 25,
-        marginLeft: 25,
-        padding: 10,
+        width: width - 70,
+        marginLeft: 1,
+        padding: 5,
         alignItems: "center",
       }}
     >
       <Image
         source={{
-          uri: user?.imageUrl,
+          uri: user?.imageUri,
         }}
-        style={{ width: 30, height: 30, borderRadius: 30 }}
+        style={{
+          width: 50,
+          height: 50,
+          borderRadius: 50,
+        }}
       />
-      <View style={{ flex: 1, marginLeft: 10 }}>
+      <View style={{ flex: 1, marginLeft: 5 }}>
         <Text style={{ fontWeight: "bold" }}>
           {user?.name}
         </Text>
@@ -73,7 +77,7 @@ const ChatRoomHeader = ({ id, children }) => {
         name="edit-2"
         size={24}
         color="black"
-        style={{ marginHorizontal: 10 }}
+        style={{ marginHorizontal: 10}}
       />
     </View>
   );
