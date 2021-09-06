@@ -22,7 +22,7 @@ import { Auth, Storage } from "aws-amplify";
 import EmojiSelector from "react-native-emoji-selector";
 import * as ImagePicker from "expo-image-picker";
 import { v4 as uuidv4 } from "uuid";
-import { Audio, AVPlaybackStatus } from "expo-av";
+import { Audio, Video, AVPlaybackStatus } from "expo-av";
 import { stat } from "fs";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import MessageComponent from '../Message/Message';
@@ -60,7 +60,7 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
         content: message,
         userID: user.attributes.sub,
         chatroomID: chatRoom.id,
-        replyToMessageID:messageReplyTo?.id,
+        replyToMessageID: messageReplyTo?.id,
       })
     );
 
@@ -135,6 +135,7 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
     if (!image) {
       return;
     }
+    console.log(image);
     const blob = await getBlob(image);
     const { key } = await Storage.put(`${uuidv4()}.png`, blob, {
       progressCallback,
@@ -221,7 +222,7 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
         audio: key,
         userID: user.attributes.sub,
         chatroomID: chatRoom.id,
-        replyToMessageID:messageReplyTo?.id,
+        replyToMessageID: messageReplyTo?.id,
       })
     );
 
@@ -258,6 +259,7 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
           </Pressable>
         </View>
       )}
+
       {image && (
         <View style={styles.sendImageContainer}>
           <Image

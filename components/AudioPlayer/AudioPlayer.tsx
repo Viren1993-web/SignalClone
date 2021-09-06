@@ -79,14 +79,15 @@ const AudioPlayer = ({ soundURI }) => {
 
 const styles = StyleSheet.create({
   sendAudioContainer: {
-    marginVertical: 10,
-    padding: 10,
+    marginVertical: 1,
+    marginHorizontal:15,
+    padding: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    alignSelf: "stretch",
+    //alignSelf: "stretch",
     borderWidth: 1,
-    borderColor: "lightgray",
+    borderColor: "red",
     borderRadius: 10,
     backgroundColor: "white",
   },
@@ -103,7 +104,6 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 10,
     backgroundColor: "#3777f0",
-
     position: "absolute",
     top: -3,
   },

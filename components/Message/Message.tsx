@@ -84,7 +84,7 @@ const Message = (props) => {
       style={[
         styles.container,
         isMe ? styles.rightContainer : styles.leftContainer,
-        { width: soundURI ? "75%" : "auto" },
+        { width: soundURI ? "78%" : "auto" },
       ]}
     >
       {repliedTo && (<MessageReply message={repliedTo} />)}
@@ -93,7 +93,7 @@ const Message = (props) => {
           <View style={{ marginBottom: message.content ? 10 : 0 }}>
             <S3Image
               imgKey={message.image}
-              style={{ width: width * 0.65, aspectRatio: 4 / 3 }}
+              style={{ width: width * 0.70, aspectRatio: 4 / 3 }}
               resizeMode="contain"
             />
           </View>
@@ -108,7 +108,7 @@ const Message = (props) => {
           < Ionicons
             name={message.status === 'DELIVERED' ? "checkmark" : "checkmark-done"}
             size={16} color="grey"
-            style={{ marginHorizontal: 5 }} />
+            style={{ marginHorizontal: 1 }} />
         )}
       </View>
     </Pressable>
@@ -121,7 +121,8 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 10,
     maxWidth: "75%",
-  }, row: {
+  },
+  row: {
     flexDirection: 'row',
     alignItems: 'flex-end',
   },
@@ -131,13 +132,13 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     backgroundColor: blue,
-    marginLeft: 10,
+    marginLeft: 5,
     marginRight: "auto",
   },
   rightContainer: {
     backgroundColor: grey,
     marginLeft: "auto",
-    marginRight: 10,
+    marginRight: 5,
     alignItems: 'flex-end',
   },
 });
