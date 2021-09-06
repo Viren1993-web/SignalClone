@@ -80,8 +80,8 @@ const AudioPlayer = ({ soundURI }) => {
 const styles = StyleSheet.create({
   sendAudioContainer: {
     marginVertical: 1,
-    marginHorizontal:15,
-    padding: 1,
+    marginHorizontal:10,
+    padding: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

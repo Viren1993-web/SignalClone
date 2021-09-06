@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     padding: 10,
+    alignItems:'flex-end',
   },
   image: {
     height: 50,
@@ -40,7 +41,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginBottom: 3,
-    
   },
   text: {
     color: 'grey',

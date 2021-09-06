@@ -77,13 +77,16 @@ export default function ChatRoomScreen() {
     <SafeAreaView style={styles.page}>
       <FlatList
         data={messages}
-        renderItem={({ item }) => <Message message={item} setMessageReply={()=>setMessageReplyTo(item)} />}
+        renderItem={({ item }) =>
+          <Message
+            message={item}
+            setAsMessageReply={() => setMessageReplyTo(item)} />}
         inverted
       />
-      <MessageInput 
-      chatRoom={chatRoom} 
-      messageReplyTo={messageReplyTo} 
-      removeMessageReplyTo={()=>setMessageReplyTo(null)}/>
+      <MessageInput
+        chatRoom={chatRoom}
+        messageReplyTo={messageReplyTo}
+        removeMessageReplyTo={() => setMessageReplyTo(null)} />
     </SafeAreaView>
   );
 }

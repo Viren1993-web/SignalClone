@@ -16,6 +16,7 @@ function App() {
   const colorScheme = useColorScheme();
   const [user, setUser] = useState<User | null>(null);
   Auth.currentAuthenticatedUser().then(console.log);
+  
   useEffect(() => {
     //create listener
     const listener = Hub.listen("datastore", async (hubData) => {

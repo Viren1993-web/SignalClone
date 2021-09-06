@@ -54,6 +54,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "replyToMessageID": {
+                    "name": "replyToMessageID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -443,5 +450,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "e9cafcad390ce2554586dee1a4bb1bfe"
+    "version": "1f64398d44b204a6bc87812ba8da1538"
 };

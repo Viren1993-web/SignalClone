@@ -30,6 +30,7 @@ const Message = (props) => {
   useEffect(() => {
     setMessage(propMessage);
   }, [propMessage]);
+
   useEffect(() => {
     if (message?.replyToMessageID) {
       DataStore.query(MessageModel, message.replyToMessageID).then(setRepliedTo);
@@ -42,9 +43,9 @@ const Message = (props) => {
         setMessage((message) => ({ ...message, ...msg.element }));
       }
     });
-
     return () => subscription.unsubscribe();
   }, []);
+
   useEffect(() => {
     setAsRead();
   }, [isMe, message])
@@ -93,7 +94,7 @@ const Message = (props) => {
           <View style={{ marginBottom: message.content ? 10 : 0 }}>
             <S3Image
               imgKey={message.image}
-              style={{ width: width * 0.70, aspectRatio: 4 / 3 }}
+              style={{ width: width * 0.65, aspectRatio: 4 / 3 }}
               resizeMode="contain"
             />
           </View>
@@ -128,12 +129,13 @@ const styles = StyleSheet.create({
   },
   messageReply: {
     backgroundColor: '#f2f2f2',
+
     padding: 5,
   },
   leftContainer: {
     backgroundColor: blue,
     marginLeft: 5,
-    marginRight: "auto",
+    marginRight: 'auto',
   },
   rightContainer: {
     backgroundColor: grey,

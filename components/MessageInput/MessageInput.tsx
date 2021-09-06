@@ -348,7 +348,7 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
         </View>
 
         <Pressable onPress={onPress} style={styles.buttonContainer}>
-          {message || image || soundURI ? (
+          {message || image || soundURI || messageReplyTo ? (
             <Ionicons name="send" size={18} color="white" />
           ) : (
             <AntDesign name="plus" size={24} color="white" />

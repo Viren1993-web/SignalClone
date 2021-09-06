@@ -15,7 +15,6 @@ const grey = "lightgrey";
 const MessageReply = (props) => {
   const { message: propMessage } = props;
   const [message, setMessage] = useState<MessageModel>(propMessage);
-
   const [user, setUser] = useState<User | undefined>();
   const [isMe, setIsMe] = useState<boolean | null>(null);
   const [soundURI, setSoundURI] = useState<any>(null);
@@ -75,7 +74,7 @@ const MessageReply = (props) => {
             {message.content}
           </Text>
         )}
-        {isMe && !!message.status && message.status !== "SENT" && (
+        {!isMe && !!message.status && message.status !== "SENT" && (
           < Ionicons
             name={message.status === 'DELIVERED' ? "checkmark" : "checkmark-done"}
             size={16} color="grey"
@@ -91,7 +90,7 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     borderRadius: 10,
-    maxWidth: "75%",
+    maxWidth: "50%",
   }, row: {
     flexDirection: 'row',
     alignItems: 'flex-end',
