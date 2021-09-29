@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   messageReply: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: 'blue',
     padding: 5,
   },
   leftContainer: {
     backgroundColor: blue,
-    marginLeft: 10,
+    marginLeft: 1,
     marginRight: "auto",
   },
   rightContainer: {
