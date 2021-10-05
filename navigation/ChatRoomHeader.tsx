@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, Text, useWindowDimensions } from "react-native";
+import { View, Image, Text, useWindowDimensions, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { Auth, DataStore } from "aws-amplify";
 import { ChatRoom, ChatRoomUser, User } from "../src/models";
 import moment from "moment";
 import ChatRooms from "../assets/dummy-data/ChatRooms";
+import GroupInfoScreen from "../screens/GroupInfoScreen";
+import { useNavigation } from "@react-navigation/core";
+
+
 const ChatRoomHeader = ({ id, children }) => {
   const { width } = useWindowDimensions();
   const [user, setUser] = useState<User | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [chatRoom, setChatRoom] = useState<ChatRoom | undefined>(undefined);
+
+  const navigation = useNavigation();
+
   const fetchUsers = async () => {
     const fetchedUsers = (await DataStore.query(ChatRoomUser))
       .filter((chatRoomUser) => chatRoomUser.chatroom.id === id)
@@ -22,6 +29,7 @@ const ChatRoomHeader = ({ id, children }) => {
       fetchedUsers.find((user) => user.id !== authUser.attributes.sub) || null
     );
   };
+  
   const fetchChatRoom = async () => {
     DataStore.query(ChatRoom, id).then(setChatRoom);
   };
@@ -49,6 +57,10 @@ const ChatRoomHeader = ({ id, children }) => {
     return allUsers.map(user => user.name).join(',');
   }
 
+  const openInfo = () => {
+    //redirect info page
+    navigation.navigate("GroupInfoScreen", { id });
+  }
   const isGroup = allUsers.length > 2;
 
   return (
@@ -72,14 +84,14 @@ const ChatRoomHeader = ({ id, children }) => {
           borderRadius: 50,
         }}
       />
-      <View style={{ flex: 1, marginLeft: 5 }}>
+      <Pressable onPress={openInfo} style={{ flex: 1, marginLeft: 5 }}>
         <Text style={{ fontWeight: "bold" }}>
           {chatRoom?.name || user?.name}
         </Text>
         <Text numberOfLines={1}>
           {isGroup ? getUsernames() : getLastOnlineText()}
         </Text>
-      </View>
+      </Pressable>
       <Feather
         name="camera"
         size={24}
