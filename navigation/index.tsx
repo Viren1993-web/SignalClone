@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable, Text, useWindowDimensions, View, Image } from 'react-native';
+import { ColorSchemeName, Pressable, Text, useWindowDimensions, View, Image, Settings } from 'react-native';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
@@ -23,6 +23,7 @@ import HomeScreen from '../screens/HomeScreen';
 import UsersScreen from '../screens/UsersScreen';
 import ChatRoomHeader from './ChatRoomHeader';
 import GroupInfoScreen from '../screens/GroupInfoScreen';
+import SettingsScreen from '../screens/Settings';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -64,7 +65,9 @@ function RootNavigator() {
           title: "Users",
         }}
       />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+
     </Stack.Navigator>
   );
 }
@@ -85,7 +88,9 @@ const HomeHeader = (props) => {
         style={{ width: 30, height: 30, borderRadius: 30 }}
       />
       <Text style={{ flex: 1, textAlign: 'center', marginLeft: 50, fontWeight: 'bold' }}>Signal</Text>
-      <Feather name="camera" size={24} color="black" style={{ marginHorizontal: 10 }} />
+      <Pressable onPress={() => navigation.navigate('Settings')}>
+        <Feather name="settings" size={24} color="black" style={{ marginHorizontal: 10 }} />
+      </Pressable>
       <Pressable onPress={() => navigation.navigate('UsersScreen')}>
         <Feather name="edit-2" size={24} color="black" style={{ marginHorizontal: 10 }} />
       </Pressable>

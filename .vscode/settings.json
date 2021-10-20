@@ -9,12 +9,14 @@
     "amplify/backend/awscloudformation": true
   },
   "cSpell.words": [
-    "Ionicons",
-    "Millis",
-    "Pressable",
     "chatrooms",
     "checkmark",
     "emotsmile",
+    "Ionicons",
+    "Millis",
+    "Pressable",
+    "secretbox",
+    "tweetnacl",
     "uuidv"
   ]
 }

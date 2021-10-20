@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text,
-  View,
   StyleSheet,
   FlatList,
   SafeAreaView,
@@ -32,7 +30,6 @@ export default function ChatRoomScreen() {
 
   useEffect(() => {
     const subscription = DataStore.observe(MessageModel).subscribe((msg) => {
-      console.log(msg.model, msg.opType, msg.element);
       if (msg.model === MessageModel && msg.opType === "INSERT") {
         setMessages((existingMessage) => [msg.element, ...existingMessage]);
       }
@@ -65,7 +62,7 @@ export default function ChatRoomScreen() {
         sort: (message) => message.createdAt(SortDirection.DESCENDING),
       }
     );
-    console.log(fetchedMessages);
+    //console.log(fetchedMessages);
     setMessages(fetchedMessages);
   };
 
@@ -86,7 +83,8 @@ export default function ChatRoomScreen() {
       <MessageInput
         chatRoom={chatRoom}
         messageReplyTo={messageReplyTo}
-        removeMessageReplyTo={() => setMessageReplyTo(null)} />
+        removeMessageReplyTo={() => setMessageReplyTo(null)} 
+        />
     </SafeAreaView>
   );
 }
