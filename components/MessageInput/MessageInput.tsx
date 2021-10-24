@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Alert,
 } from "react-native";
 import {
   SimpleLineIcons,
@@ -22,10 +23,18 @@ import { Auth, Storage } from "aws-amplify";
 import EmojiSelector from "react-native-emoji-selector";
 import * as ImagePicker from "expo-image-picker";
 import { v4 as uuidv4 } from "uuid";
-import { Audio, Video, AVPlaybackStatus } from "expo-av";
-import { stat } from "fs";
+import { Audio, AVPlaybackStatus } from "expo-av";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
-import MessageComponent from '../Message/Message';
+import MessageComponent from "../Message/Message";
+import { ChatRoomUser } from "../../src/models";
+import { useNavigation } from "@react-navigation/core";
+import { box } from "tweetnacl";
+import {
+  encrypt,
+  getMySecretKey,
+  stringToUint8Array,
+} from "../../utils/crypto";
+
 const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
   const [message, setMessage] = useState("");
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
@@ -33,6 +42,8 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
   const [progress, setProgress] = useState(0);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [soundURI, setSoundURI] = useState<string | null>(null);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
@@ -52,19 +63,59 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
     })();
   }, []);
 
-  const sendMessage = async () => {
+  const sendMessageToUser = async (user, fromUserId) => {
     // send message
-    const user = await Auth.currentAuthenticatedUser();
+    const ourSecretKey = await getMySecretKey();
+    if (!ourSecretKey) {
+      return;
+    }
+
+    if (!user.publicKey) {
+      Alert.alert(
+        "The user haven't set his keypair yet",
+        "Until the user generates the keypair, you cannot securely send him messages"
+      );
+      return;
+    }
+
+    console.log("private key", ourSecretKey);
+
+    const sharedKey = box.before(
+      stringToUint8Array(user.publicKey),
+      ourSecretKey
+    );
+    console.log("shared key", sharedKey);
+
+    const encryptedMessage = encrypt(sharedKey, { message });
+    console.log("encrypted message", encryptedMessage);
+
     const newMessage = await DataStore.save(
       new Message({
-        content: message,
-        userID: user.attributes.sub,
+        content: encryptedMessage, // <- this messages should be encrypted
+        userID: fromUserId,
+        ForUserId: user.id,
         chatroomID: chatRoom.id,
         replyToMessageID: messageReplyTo?.id,
       })
     );
 
-    updateLastMessage(newMessage);
+    // updateLastMessage(newMessage);
+  };
+
+  const sendMessage = async () => {
+    // get all the users of this chatroom
+    const authUser = await Auth.currentAuthenticatedUser();
+
+    const users = (await DataStore.query(ChatRoomUser))
+      .filter((cru) => cru.chatroom.id === chatRoom.id)
+      .map((cru) => cru.user);
+
+    console.log("users", users);
+
+    // for each user, encrypt the `content` with his public key, and save it as a new message
+    await Promise.all(
+      users.map((user) => sendMessageToUser(user, authUser.attributes.sub))
+    );
 
     resetFields();
   };
@@ -135,7 +186,6 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
     if (!image) {
       return;
     }
-    console.log(image);
     const blob = await getBlob(image);
     const { key } = await Storage.put(`${uuidv4()}.png`, blob, {
       progressCallback,
@@ -149,7 +199,6 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
         image: key,
         userID: user.attributes.sub,
         chatroomID: chatRoom.id,
-        status: "SENT",
         replyToMessageID: messageReplyTo?.id,
       })
     );
@@ -160,8 +209,8 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
   };
 
   const getBlob = async (uri: string) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
+    const respone = await fetch(uri);
+    const blob = await respone.blob();
     return blob;
   };
 
@@ -208,9 +257,9 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
       return;
     }
     const uriParts = soundURI.split(".");
-    const extension = uriParts[uriParts.length - 1];
+    const extenstion = uriParts[uriParts.length - 1];
     const blob = await getBlob(soundURI);
-    const { key } = await Storage.put(`${uuidv4()}.${extension}`, blob, {
+    const { key } = await Storage.put(`${uuidv4()}.${extenstion}`, blob, {
       progressCallback,
     });
 
@@ -222,6 +271,7 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
         audio: key,
         userID: user.attributes.sub,
         chatroomID: chatRoom.id,
+        status: "SENT",
         replyToMessageID: messageReplyTo?.id,
       })
     );
@@ -238,15 +288,17 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
       keyboardVerticalOffset={100}
     >
       {messageReplyTo && (
-        <View style={{
-          backgroundColor: '#f2f2f2',
-          padding: 5,
-          flexDirection: 'row',
-          alignSelf: 'stretch',
-          justifyContent: 'space-between',
-        }}>
+        <View
+          style={{
+            backgroundColor: "#f2f2f2",
+            padding: 5,
+            flexDirection: "row",
+            alignSelf: "stretch",
+            justifyContent: "space-between",
+          }}
+        >
           <View style={{ flex: 1 }}>
-            <Text>Reply To:</Text>
+            <Text>Reply to:</Text>
             <MessageComponent message={messageReplyTo} />
           </View>
           <Pressable onPress={() => removeMessageReplyTo()}>
@@ -348,7 +400,7 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
         </View>
 
         <Pressable onPress={onPress} style={styles.buttonContainer}>
-          {message || image || soundURI || messageReplyTo ? (
+          {message || image || soundURI ? (
             <Ionicons name="send" size={18} color="white" />
           ) : (
             <AntDesign name="plus" size={24} color="white" />

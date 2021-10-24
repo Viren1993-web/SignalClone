@@ -1,29 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Pressable, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Pressable,
+  Alert,
+} from "react-native";
 import { DataStore } from "@aws-amplify/datastore";
 import { User } from "../../src/models";
 import { Auth, Storage } from "aws-amplify";
 import { S3Image } from "aws-amplify-react-native";
 import { useWindowDimensions } from "react-native";
-import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { Ionicons } from "@expo/vector-icons";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import { Message as MessageModel } from "../../src/models";
 import MessageReply from "../MessageReply/MessageReply";
-import { useActionSheet } from "@expo/react-native-action-sheet";
+import { box } from "tweetnacl";
+import {
+  decrypt,
+  getMySecretKey,
+  stringToUint8Array,
+} from "../../utils/crypto";
 
 const blue = "#3777f0";
 const grey = "lightgrey";
 
 const Message = (props) => {
   const { setAsMessageReply, message: propMessage } = props;
+
   const [message, setMessage] = useState<MessageModel>(propMessage);
-  const [repliedTo, setRepliedTo] = useState<MessageModel | undefined>(undefined);
+  const [decryptedContent, setDecryptedContent] = useState("");
+  const [repliedTo, setRepliedTo] = useState<MessageModel | undefined>(
+    undefined
+  );
   const [user, setUser] = useState<User | undefined>();
   const [isMe, setIsMe] = useState<boolean | null>(null);
   const [soundURI, setSoundURI] = useState<any>(null);
   const [isDeleted, setIsDeleted] = useState(false);
-  const { showActionSheetWithOptions } = useActionSheet();
+
   const { width } = useWindowDimensions();
+  const { showActionSheetWithOptions } = useActionSheet();
 
   useEffect(() => {
     DataStore.query(User, message.userID).then(setUser);
@@ -35,27 +53,31 @@ const Message = (props) => {
 
   useEffect(() => {
     if (message?.replyToMessageID) {
-      DataStore.query(MessageModel, message.replyToMessageID).then(setRepliedTo);
+      DataStore.query(MessageModel, message.replyToMessageID).then(
+        setRepliedTo
+      );
     }
-  }, [message])
+  }, [message]);
 
   useEffect(() => {
-    const subscription = DataStore.observe(MessageModel, message.id).subscribe((msg) => {
-      if (msg.model === MessageModel) {
-        if (msg.opType === "UPDATE") {
-          setMessage((message) => ({ ...message, ...msg.element }));
-        } else if (msg.opType === "DELETE") {
-          setIsDeleted(true);
+    const subscription = DataStore.observe(MessageModel, message.id).subscribe(
+      (msg) => {
+        if (msg.model === MessageModel) {
+          if (msg.opType === "UPDATE") {
+            setMessage((message) => ({ ...message, ...msg.element }));
+          } else if (msg.opType === "DELETE") {
+            setIsDeleted(true);
+          }
         }
       }
-    }
     );
+
     return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
     setAsRead();
-  }, [isMe, message])
+  }, [isMe, message]);
 
   useEffect(() => {
     if (message.audio) {
@@ -74,50 +96,81 @@ const Message = (props) => {
     checkIfMe();
   }, [user]);
 
-  const deleteMessage = async () => {
-    await DataStore.delete(message);
-  }
+  useEffect(() => {
+    if (!message?.content || !user?.publicKey) {
+      return;
+    }
 
-  const confirmDelete = () => {
-    Alert.alert("Confirm Delete", "Are you sure you want to delete the message ?", [
-      {
-        text: "Delete",
-        onPress: deleteMessage,
-        style: "destructive",
-      }, {
-        text: "Cancel",
-      },
+    const decryptMessage = async () => {
+      const myKey = await getMySecretKey();
+      if (!myKey) {
+        return;
+      }
+      // decrypt message.content
+      const sharedKey = box.before(stringToUint8Array(user.publicKey), myKey);
+      console.log("sharedKey", sharedKey);
+      const decrypted = decrypt(sharedKey, message.content);
+      console.log("decrypted", decrypted);
+      setDecryptedContent(decrypted.message);
+    };
 
-    ])
-  }
+    decryptMessage();
+  }, [message, user]);
+
   const setAsRead = async () => {
     if (isMe === false && message.status !== "READ") {
-      await DataStore.save(MessageModel.copyOf(message, (updated) => {
-        updated.status = "READ";
-      }));
+      await DataStore.save(
+        MessageModel.copyOf(message, (updated) => {
+          updated.status = "READ";
+        })
+      );
     }
-  }
+  };
+
+  const deleteMessage = async () => {
+    await DataStore.delete(message);
+  };
+
+  const confirmDelete = () => {
+    Alert.alert(
+      "Confirm delete",
+      "Are you sure you want to delete the message?",
+      [
+        {
+          text: "Delete",
+          onPress: deleteMessage,
+          style: "destructive",
+        },
+        {
+          text: "Cancel",
+        },
+      ]
+    );
+  };
+
   const onActionPress = (index) => {
     if (index === 0) {
       setAsMessageReply();
-    } else if (isMe) {
-      confirmDelete();
-    } else {
-      Alert.alert("Can't perform action", "This is not your Message");
+    } else if (index === 1) {
+      if (isMe) {
+        confirmDelete();
+      } else {
+        Alert.alert("Can't perform action", "This is not your message");
+      }
     }
-
-  }
+  };
 
   const openActionMenu = () => {
     const options = ["Reply", "Delete", "Cancel"];
     const destructiveButtonIndex = 1;
     const cancelButtonIndex = 2;
-
-    showActionSheetWithOptions({
-      options,
-      destructiveButtonIndex,
-      cancelButtonIndex
-    }, onActionPress
+    showActionSheetWithOptions(
+      {
+        options,
+        destructiveButtonIndex,
+        cancelButtonIndex,
+      },
+      onActionPress
     );
   };
 
@@ -131,10 +184,10 @@ const Message = (props) => {
       style={[
         styles.container,
         isMe ? styles.rightContainer : styles.leftContainer,
-        { width: soundURI ? "78%" : "auto" },
+        { width: soundURI ? "75%" : "auto" },
       ]}
     >
-      {repliedTo && (<MessageReply message={repliedTo} />)}
+      {repliedTo && <MessageReply message={repliedTo} />}
       <View style={styles.row}>
         {message.image && (
           <View style={{ marginBottom: message.content ? 10 : 0 }}>
@@ -146,16 +199,21 @@ const Message = (props) => {
           </View>
         )}
         {soundURI && <AudioPlayer soundURI={soundURI} />}
-        {!!message.content && (
+        {!!decryptedContent && (
           <Text style={{ color: isMe ? "black" : "white" }}>
-            {isDeleted ? "message Deleted" : message.content}
+            {isDeleted ? "message deleted" : decryptedContent}
           </Text>
         )}
+
         {isMe && !!message.status && message.status !== "SENT" && (
-          < Ionicons
-            name={message.status === 'DELIVERED' ? "checkmark" : "checkmark-done"}
-            size={16} color="grey"
-            style={{ marginHorizontal: 1 }} />
+          <Ionicons
+            name={
+              message.status === "DELIVERED" ? "checkmark" : "checkmark-done"
+            }
+            size={16}
+            color="gray"
+            style={{ marginHorizontal: 5 }}
+          />
         )}
       </View>
     </Pressable>
@@ -170,24 +228,24 @@ const styles = StyleSheet.create({
     maxWidth: "75%",
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
   },
   messageReply: {
-    backgroundColor: '#f2f2f2',
-
+    backgroundColor: "gray",
     padding: 5,
+    borderRadius: 5,
   },
   leftContainer: {
     backgroundColor: blue,
-    marginLeft: 5,
-    marginRight: 'auto',
+    marginLeft: 10,
+    marginRight: "auto",
   },
   rightContainer: {
     backgroundColor: grey,
     marginLeft: "auto",
-    marginRight: 5,
-    alignItems: 'flex-end',
+    marginRight: 10,
+    alignItems: "flex-end",
   },
 });
 
